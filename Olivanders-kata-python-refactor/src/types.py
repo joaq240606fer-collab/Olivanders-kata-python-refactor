@@ -1,24 +1,21 @@
-class Oivanders (object):
-    def __init__(self, items):
-        self.items = items
+class itenmsName:
+    AGED_BRIE = "Aged Brie"
+    BACKSTAGE_PASSES = "Backstage passes to a TAFKAL80ETC concert"
+    SULFURAS = "Sulfuras, Hand of Ragnaros"
+    DEFAULT = "Default Item"
 
-    def updateQuality (self):
-        for item in self.items:
-            item.updateQuality()
-    def getItems (self):
-        return self.items
-
-
-class Item(Document):
-
-    def __init__(self,name,sell_in,quality):
+class Item:
+    def __init__(self, name, sell_in, quality):
         self.name = name
         self.sell_in = sell_in
         self.quality = quality
 
-    def __rerp__(self):
-        
-        return "%s, %s, %s" % (self.name, self.sell_in, self.quality)
+    def update_quality(self):
+        """Método base. Las subclases lo sobrescribirán."""
+        pass
+
+    def __repr__(self):
+        return f"{self.name}, {self.sell_in}, {self.quality}"
 
 
     
