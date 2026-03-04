@@ -48,3 +48,7 @@ class BackstagePassesItem(Item):
         self.sell_in -= 1
         if self.sell_in < 0:
             self.quality = 0
+
+class SulfurasItem(Item):
+    def update_quality(self):
+        pass
