@@ -1,6 +1,7 @@
 {
     "conventionalCommits.scopes": [
         "Añadir codigo",
-        "Refactorizar codigo"
+        "Refactorizar codigo",
+        "Añadir casos test"
     ]
 }

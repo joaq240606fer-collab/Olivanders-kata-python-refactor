@@ -1,0 +1,133 @@
+
+import pytest
+from src.types import ( 
+    Item, 
+    ItemFactory, 
+    ItemNames,
+    NormalItem,
+    AgedBrieItem,
+    BackstagePassesItem,
+    SulfurasItem
+)
+
+
+
+class TestItemFactory:
+    def test_creates_normal_item(self):
+        item = ItemFactory.create_item("Normal Item", 10, 5)
+        assert isinstance(item, NormalItem)
+        assert item.name == "Normal Item"
+
+    def test_creates_aged_brie(self):
+        item = ItemFactory.create_item(ItemNames.AGED_BRIE, 10, 5)
+        assert isinstance(item, AgedBrieItem)
+
+    def test_creates_backstage_passes(self):
+        item = ItemFactory.create_item(ItemNames.BACKSTAGE_PASSES, 10, 5)
+        assert isinstance(item, BackstagePassesItem)
+
+    def test_creates_sulfuras(self):
+        item = ItemFactory.create_item(ItemNames.SULFURAS, 10, 80)
+        assert isinstance(item, SulfurasItem)
+
+
+class TestNormalItem:
+    def test_quality_decreases(self):
+        item = NormalItem("Normal Item", 10, 10)
+        item.update_quality()
+        assert item.quality == 9
+        assert item.sell_in == 9
+
+    def test_quality_cannot_go_below_zero(self):
+        item = NormalItem("Normal Item", 10, 0)
+        item.update_quality()
+        assert item.quality == 0
+
+    def test_quality_decreases_twice_after_sell_date(self):
+        item = NormalItem("Normal Item", 0, 10)
+        item.update_quality()
+        assert item.quality == 8
+        assert item.sell_in == -1
+
+class TestAgedBrieItem:
+    def test_quality_increases(self):
+        item = AgedBrieItem(ItemNames.AGED_BRIE, 10, 10)
+        item.update_quality()
+        assert item.quality == 11
+        assert item.sell_in == 9
+
+    def test_quality_increases_twice_after_sell_date(self):
+        item = AgedBrieItem(ItemNames.AGED_BRIE, 0, 10)
+        item.update_quality()
+        assert item.quality == 12
+        assert item.sell_in == -1
+
+    def test_quality_cannot_exceed_50(self):
+        item = AgedBrieItem(ItemNames.AGED_BRIE, 10, 50)
+        item.update_quality()
+        assert item.quality == 50
+
+class TestBackstagePassesItem:
+    def test_quality_increases_by_one(self):
+        item = BackstagePassesItem(ItemNames.BACKSTAGE_PASSES, 20, 10)
+        item.update_quality()
+        assert item.quality == 11
+
+    def test_quality_increases_by_two_when_10_days_left(self):
+        item = BackstagePassesItem(ItemNames.BACKSTAGE_PASSES, 10, 10)
+        item.update_quality()
+        assert item.quality == 12
+
+    def test_quality_increases_by_three_when_5_days_left(self):
+        item = BackstagePassesItem(ItemNames.BACKSTAGE_PASSES, 5, 10)
+        item.update_quality()
+        assert item.quality == 13
+
+    def test_quality_drops_to_zero_after_concert(self):
+        item = BackstagePassesItem(ItemNames.BACKSTAGE_PASSES, 0, 10)
+        item.update_quality()
+        assert item.quality == 0
+        assert item.sell_in == -1
+
+class TestSulfurasItem:
+    def test_quality_does_not_change(self):
+        item = SulfurasItem(ItemNames.SULFURAS, 10, 80)
+        item.update_quality()
+        assert item.quality == 80
+
+    def test_sell_in_does_not_change(self):
+        item = SulfurasItem(ItemNames.SULFURAS, 10, 80)
+        item.update_quality()
+        assert item.sell_in == 10
+
+
+class TestGildedRose:
+    def test_updates_all_items(self):
+        items = [
+            ItemFactory.create_item("Aged Brie", 2, 0),
+            ItemFactory.create_item("Backstage passes to a TAFKAL80ETC concert", 20, 40),
+            ItemFactory.create_item("Sulfuras, Hand of Ragnaros", 0, 80),
+            ItemFactory.create_item("Conjured Mana Cake", 3, 6),
+        ]
+        
+        gilded_rose = GildedRose(items)
+        gilded_rose.update_quality()
+        
+        # Verificamos que todos los items hayan sido procesados (sell_in bajó 1, excepto Sulfuras)
+        assert items[0].sell_in == 1
+        assert items[1].sell_in == 19
+        assert items[2].sell_in == 0  # Sulfuras no cambia
+        assert items[3].sell_in == 2
+
+    def test_quality_changes_correctly_for_mixed_items(self):
+        items = [
+            ItemFactory.create_item(ItemNames.AGED_BRIE, 2, 0),
+            ItemFactory.create_item("Normal Item", 2, 0),
+        ]
+        
+        gilded_rose = GildedRose(items)
+        gilded_rose.update_quality()
+        
+        # Aged Brie sube, Normal baja
+        assert items[0].quality == 1
+        assert items[1].quality == 0
