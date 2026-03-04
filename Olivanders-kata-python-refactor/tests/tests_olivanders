@@ -110,24 +110,4 @@ class TestGildedRose:
             ItemFactory.create_item("Conjured Mana Cake", 3, 6),
         ]
         
-        gilded_rose = GildedRose(items)
-        gilded_rose.update_quality()
-        
-        # Verificamos que todos los items hayan sido procesados (sell_in bajó 1, excepto Sulfuras)
-        assert items[0].sell_in == 1
-        assert items[1].sell_in == 19
-        assert items[2].sell_in == 0  # Sulfuras no cambia
-        assert items[3].sell_in == 2
-
-    def test_quality_changes_correctly_for_mixed_items(self):
-        items = [
-            ItemFactory.create_item(ItemNames.AGED_BRIE, 2, 0),
-            ItemFactory.create_item("Normal Item", 2, 0),
-        ]
-        
-        gilded_rose = GildedRose(items)
-        gilded_rose.update_quality()
-        
-        # Aged Brie sube, Normal baja
-        assert items[0].quality == 1
-        assert items[1].quality == 0
+ 

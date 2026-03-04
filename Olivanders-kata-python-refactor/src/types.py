@@ -17,5 +17,12 @@ class Item:
     def __repr__(self):
         return f"{self.name}, {self.sell_in}, {self.quality}"
 
-
+class NormalItem(Item):
+    def update_quality(self):
+        if self.quality > 0:
+            self.quality -= 1
+        self.sell_in -= 1
+        if self.sell_in < 0:
+            if self.quality > 0:
+                self.quality -= 1
     
