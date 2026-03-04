@@ -52,11 +52,22 @@ class BackstagePassesItem(Item):
 class SulfurasItem(Item):
     def update_quality(self):
         pass
-
-class olivanders:
+class ItemFactory:
+    @staticmethod
+    def create_item(name, sell_in, quality):
+        if name == itenmsName.AGED_BRIE:
+            return AgedBrieItem(name, sell_in, quality)
+        elif name == itenmsName.BACKSTAGE_PASSES:
+            return BackstagePassesItem(name, sell_in, quality)
+        elif name == itenmsName.SULFURAS:
+            return SulfurasItem(name, sell_in, quality)
+        else:
+            return NormalItem(name, sell_in, quality)
+class Olivanders:
     def __init__(self, items):
         self.items = items
 
     def update_quality(self):
         for item in self.items:
             item.update_quality()
+
