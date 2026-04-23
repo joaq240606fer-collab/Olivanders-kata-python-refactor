@@ -1,0 +1,11 @@
+<xs:element>
+    <xs:complexType name="Licencia">
+        <xs:atribute name="tipo">
+            <xs:restriction type="string">
+                <xs:pattron value="String">
+                 [A-Z]{2}.\b{4}[a-b]?
+                <\xs:pattron>
+            <\xs:restriction>
+        </xs:atribute>
+    </xs:complexType>
+<\xs:element>
